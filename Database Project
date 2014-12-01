@@ -1,0 +1,261 @@
+--Travis Kovacs
+--Dr. Alan Labouseur
+--Database Management
+--Databse Project
+
+--Destiny Database
+
+--Drops Database. Highlight function by itself then run
+--DROP DATABASE DestinyDatabase;
+
+--Creates Database. Highlight function by itself then run
+--CREATE DATABASE DestinyDatabase;
+
+
+--Drops all tables if they exist, as well as their dependancies
+DROP TABLE IF EXISTS DamageType CASCADE;
+DROP TABLE IF EXISTS Weapons CASCADE;
+DROP TABLE IF EXISTS Subclass CASCADE;
+DROP TABLE IF EXISTS Main CASCADE;
+DROP TABLE IF EXISTS Secondary CASCADE;
+DROP TABLE IF EXISTS Heavy CASCADE;
+DROP TABLE IF EXISTS Archetype CASCADE;
+DROP TABLE IF EXISTS Player CASCADE;
+
+
+--Creates all tables
+CREATE TABLE DamageType (
+      DmgType	text NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE Weapons (
+      wid	int NOT NULL PRIMARY KEY,
+      Name	varchar(50) NOT NULL,
+      Rarity	text NOT NULL,
+      Slot	text NOT NULL,
+      DmgType	text NOT NULL REFERENCES DamageType(DmgType),
+      DmgMin	int NOT NULL,
+      DmgMax	int NOT NULL,
+      WeaponType	text NOT NULL,
+      RateOfFire	text NOT NULL,
+      Impact	text NOT NULL,
+      Range	text NOT NULL,
+      Stability	text NOT NULL,
+      MagSize	int NOT NULL
+);
+
+CREATE TABLE Subclass (
+      scid	text NOT NULL PRIMARY KEY,
+      DmgType	text NOT NULL REFERENCES DamageType(DmgType),
+      Distance	text NOT NULL,
+      Type	text NOT NULL,
+      Armor	text NOT NULL
+);
+
+CREATE TABLE Main (
+      main	varchar(50) NOT NULL PRIMARY KEY,
+      wid	int NOT NULL REFERENCES Weapons(wid),
+      WeaponType	text NOT NULL
+);
+
+CREATE TABLE Secondary (
+      secondary	varchar(50) NOT NULL PRIMARY KEY,
+      wid	int NOT NULL REFERENCES Weapons(wid),
+      WeaponType	text NOT NULL
+);
+
+CREATE TABLE Heavy (
+      heavy	varchar(50) NOT NULL PRIMARY KEY,
+      wid	int NOT NULL REFERENCES Weapons(wid),
+      WeaponType	text NOT NULL
+);
+
+CREATE TABLE Archetype (
+      aid	text NOT NULL PRIMARY KEY,
+      scid	text NOT NULL REFERENCES Subclass(scid)
+);
+CREATE TABLE Player (
+      pid	int NOT NULL PRIMARY KEY,
+      aid	text NOT NULL REFERENCES Archetype(aid),
+      Main	varchar(50) REFERENCES Main(main),
+      Secondary	varchar(50) REFERENCES Secondary(secondary),
+      Heavy	varchar(50) REFERENCES Heavy(heavy)
+);
+
+
+
+
+--Populates Damage Type table
+INSERT INTO DamageType (DmgType)
+     VALUES ('Kinetic'),
+            ('Void'),
+            ('Arc'),
+            ('Solar');
+
+--Populates into Subclass Table
+INSERT INTO Subclass (scid, DmgType, Distance, Type, Armor)
+     VALUES ('Gunslinger', 'Solar', 'Short', 'DPS', 'Medium Plate'),
+            ('Striker', 'Arc', 'Short', 'Support/Tank', 'Heavy Plate'),
+            ('Voidwalker', 'Void', 'Long', 'DPS/Mage', 'Robes');
+
+--Populates Weapons table
+INSERT INTO Weapons (wid, Name, Rarity, Slot, DmgType, DmgMin, DmgMax, WeaponType, RateOfFire, Impact, Range, Stability, MagSize)
+     VALUES (1,'Fate of All Fools', 'Exotic', 'Main', 'Solar', 260, 300, 'Scout Rilfe', 'Low', 'Impressive', 'Long', 'Mediocre', 7),
+            (2,'MIDA Multi-Tool', 'Exotic' , 'Main', 'Kinetic', 260, 300, 'Scout Rifle', 'Mediocre', 'Low', 'Long', 'Impressive', 21),
+            (3,'Thorn', 'Exotic', 'Main',  'Kinetic', 260, 300, 'Hand Cannon', 'Mediocre', 'Superior', 'Mediocre', 'Low', 6),
+            (4,'Hawkmoon', 'Exotic', 'Main',  'Kinetic', 260, 300, 'Hand Cannon', 'Low', 'Superior', 'Impressive', 'Mediocre', 13),
+            (5,'Suros Regime', 'Exotic', 'Main',  'Kinetic', 260, 300, 'Auto Rifle', 'Superior', 'Low', 'Mediocre', 'Impressive', 33),
+            (6,'Hard Light', 'Exotic', 'Main',  'Kinetic', 260, 300, 'Auto Rifle', 'Superior', 'Low', 'Mediocre', 'Mediocre', 40),
+            (7,'Bad Juju', 'Exotic', 'Main',  'Kinetic', 260, 300, 'Pulse Rifle', 'Superior', 'Low', 'Low', 'Impressive', 15),
+            (8,'Red Death', 'Exotic', 'Main',  'Kinetic', 260, 300, 'Pulse Rifle', 'Impressive', 'Mediocre', 'Mediocre', 'Mediocre', 27),
+            (9,'Patience and Time', 'Exotic', 'Secondary', 'Arc', 260, 300, 'Sniper Rifle', 'Low', 'Low', 'Impressive', 'Max', 4),
+            (10,'Ice Breaker', 'Exotic', 'Secondary', 'Solar', 260, 300, 'Sniper Rifle', 'Low', 'Low', 'Max', 'Low', 6),
+            (11,'Plan-C', 'Exotic', 'Secondary', 'Arc', 260, 300, 'Fusion Rifle', 'Low', 'Superior', 'Impressive', 'Mediocre', 5),
+            (12,'Vex Mythoclast', 'Exotic', 'Secondary', 'Solar', 260, 300, 'Fusion Rifle', 'Mediocre', 'Mediocre', 'Impressive', 'Impressive', 21),
+            (13,'Invective', 'Exotic', 'Secondary', 'Solar', 260, 300, 'Shotgun', 'Mediocre', 'Mediocre', 'Mediocre', 'Mediocre', 4),
+            (14,'Universal Remote', 'Exotic', 'Secondary', 'Kinetic', 260, 300, 'Shotgun', 'Low', 'Mediocre', 'Low', 'Impressive', 5),
+            (15,'Gjallerhorn', 'Exotic', 'Heavy', 'Solar', 260, 300, 'Rocket Launcher', 'Low', 'Impressive', 'Suprerior', 'Impressive', 2),
+            (16,'Dragons Breath', 'Exotic', 'Heavy', 'Solar', 260, 300, 'Rocket Launcher', 'Low', 'Superior', 'Mediocre', 'Superior', 2),
+            (17,'Super Good Advice', 'Exotic', 'Heavy', 'Solar', 260, 300, 'Machine Gun', 'Superior', 'Mediocre', 'Low', 'Mediocre', 58),
+            (18,'Thunderlord', 'Exotic', 'Heavy', 'Arc', 260, 300, 'Machine Gun', 'Impressive', 'Impressive', 'Mediocre', 'Mediocre', 38),
+            (19,'The Calling', 'Legendary', 'Main',  'Kinetic', 248, 300, 'Scout Rifle', 'Mediocre', 'Impressive', 'Superior', 'Superior', 13),
+            (20,'Vision of Confluence', 'Legendary', 'Main', 'Solar', 248, 300, 'Scout Rifle', 'Mediocre', 'Mediocre', 'Impressive', 'Impressive', 19),
+            (21,'The Fatebringer', 'Legendary', 'Main',  'Arc', 248, 300, 'Hand Cannon', 'Low', 'Superior', 'Mediocre', 'Mediocre', 12),
+            (22,'The Devil You Know', 'Legendary', 'Main',  'Kinetic', 248, 300, 'Hand Cannon', 'Low', 'Superior', 'Low', 'Mediocre', 12),
+            (23,'Atheons Epilogue', 'Legendary', 'Main',  'Void', 248, 300, 'Auto Rifle', 'Max', 'Negligable', 'Low', 'Superior', 70),
+            (24,'Grim Citizen III', 'Legendary', 'Main',  'Kinetic', 248, 300, 'Auto Rifle', 'Superior', 'Mediocre', 'Mediocre', 'Mediocre', 24),
+            (25,'Strange Suspect', 'Legendary', 'Main',  'Kinetic', 248, 300, 'Pulse Rifle', 'Low', 'Mediocre', 'Mediocre', 'Mediocre', 30),
+            (26,'The Conduit', 'Legendary', 'Main',  'Kinetic', 248, 300, 'Pulse Rifle', 'Impressive', 'Low', 'Mediocre', 'Impressive', 18),
+            (27,'Praedyths Revenge', 'Legendary', 'Secondary', 'Void', 248, 300, 'Sniper Rifle', 'Mediocre', 'Low', 'Impressive', 'Max', 4),
+            (28,'Final Boss', 'Legendary', 'Secondary', 'Solar', 248, 300, 'Sniper Rifle', 'Mediocre', 'Low', 'Superior', 'Impressive', 4),
+            (29,'Praetorian Foil', 'Legendary', 'Secondary', 'Solar', 248, 300, 'Fusion Rifle', 'Low', 'Max', 'Impressive', 'Mediocre', 5),
+            (30,'77 Wizard', 'Legendary', 'Secondary', 'Void', 248, 300, 'Fusion Rifle', 'Low', 'Max', 'Impressive', 'Mediocre', 4),
+            (31,'Found Verdict', 'Legendary', 'Secondary', 'Arc', 248, 300, 'Shotgun', 'Low', 'Impressive', 'Low', 'Low', 6),
+            (32,'Comedian', 'Legendary', 'Secondary', 'Arc', 248, 300, 'Shotgun', 'Low', 'Mediocre', 'Low', 'Mediocre', 5),
+            (33,'Hezen Vengeance', 'Legendary', 'Heavy', 'Solar', 248, 300, 'Rocket Launcher', 'Negligable', 'Max', 'Superior', 'Mediocre', 2),
+            (34,'Radegasts Fury', 'Legendary', 'Heavy', 'Arc', 248, 300, 'Rocket Launcher', 'Low', 'Superior', 'Superior', 'Impressive', 1),
+            (35,'Corrective Measure', 'Legendary', 'Heavy', 'Void', 248, 300, 'Machine Gun', 'Superior', 'Mediocre', 'Low', 'Impressive', 58),
+            (36,'Zombie Apocalypse WF47', 'Legendary', 'Heavy', 'Void', 248, 300, 'Machine Gun', 'Superior', 'Mediocre', 'Low', 'Mediocre', 43),
+            (37,'Vesta Noblese', 'Rare', 'Main',  'Kinetic', 224, 242, 'Scout Rifle', 'Low', 'Mediocre', 'Impressive', 'Mediocre', 14),
+            (38,'Mos Ardus IV', 'Rare', 'Main',  'Kinetic', 169, 200, 'Hand Cannon', 'Superior', 'Low', 'Impressive', 'Low', 8),
+            (39,'Galahad-E', 'Rare', 'Main',  'Kinetic', 213, 213, 'Auto Rifle', 'Superior', 'Mediocre', 'Low', 'Mediocre', 30),
+            (40,'The Strangers Rifle', 'Rare', 'Main', 'Kinetic', 199, 215, 'Pulse Rifle', 'Impressive', 'Low', 'Impressive', 'Superior', 21),
+            (41,'Saigon-LR4', 'Rare', 'Secondary', 'Kinetic', 135, 135, 'Sniper Rifle', 'Low', 'Superior', 'Superior', 'Mediocre', 4),
+            (42,'Dammerung FR5', 'Rare', 'Secondary', 'Arc', 92, 130, 'Fusion Rifle', 'Mediocre', 'Impressive', 'Low', 'Impressive', 6),
+            (43,'Graviton ESC', 'Rare', 'Secondary', 'Arc', 148, 190, 'Shotgun', 'Impressive', 'Impressive', 'Low', 'Mediocre', 5),
+            (44,'The Unfriendly Giant', 'Rare', 'Heavy', 'Arc', 120, 200, 'Rocket Launcher', 'Low', 'Superior', 'Impressive', 'Impressive', 2),
+            (45,'Genghis-E', 'Rare', 'Heavy', 'Solar', 120, 200, 'Machine Gun', 'Max', 'Low', 'Low', 'Mediocre', 72);
+
+
+--Populates Main Weapons table
+INSERT INTO Main (main, wid, WeaponType)
+     VALUES ('Fate of All Fools', 1, 'Scout Rifle'),
+            ('MIDA Multi-Tool', 2, 'Scout Rifle'),
+            ('Thorn', 3, 'Hand Cannon'),
+            ('Hawkmoon', 4, 'Hand Cannon'),
+            ('Suros Regime', 5, 'Auto Rifle'),
+            ('Hard Light', 6, 'Auto Rifle'),
+            ('Bad Juju', 7, 'Pulse Rifle'),
+            ('Red Death', 8, 'Pulse Rifle'),
+            ('The Calling', 19, 'Scout Rifle'),
+            ('Vision of Confluence', 20, 'Scout Rifle'),
+            ('The Fatebringer', 21, 'Hand Cannon'),
+            ('The Devil You Know', 22, 'Hand Cannon'),
+            ('Atheons Epilogue', 23, 'Auto Rifle'),
+            ('Grim Citizen III', 24, 'Auto Rifle'),
+            ('Strange Suspect', 25, 'Pulse Rifle'),
+            ('The Conduit', 26, 'Pulse Rifle'),
+            ('Vesta Noblese', 37, 'Scout Rifle'),
+            ('Mos Ardus IV', 38, 'Hand Cannon'),
+            ('Galahad-E', 39, 'Auto Rifle'),
+            ('The Strangers Rifle', 40, 'Pulse Rifle');
+
+
+--Populates Secondary Weapons table             
+INSERT INTO Secondary (secondary, wid, WeaponType)
+     VALUES ('Patience and Time', 9, 'Sniper Rifle'),
+            ('Ice Breaker', 10, 'Sniper Rifle'),
+            ('Plan-C', 11, 'Fusion Rifle'),
+            ('Vex Mythoclast', 12, 'Fusion Rifle'),
+            ('Invective', 13, 'Shotgun'),
+            ('Universal Remote', 14, 'Shotgun'),
+            ('Praedyths Revenge', 27, 'Sniper Rifle'),
+            ('Final Boss', 28, 'Sniper Rifle'),
+            ('Praetorian Foil', 29, 'Fusion Rifle'),
+            ('77 Wizard', 30, 'Fusion Rifle'),
+            ('Found Verdict', 31, 'Shotgun'),
+            ('Comedian', 32, 'Shotgun'),
+            ('Saigon-LR4', 41, 'Sniper Rifle'),
+            ('Dammerung FR5', 42, 'Fusion Rifle'),
+            ('Graviton ESC', 43, 'Shotgun');
+
+--Populates Heavy Weapons table
+INSERT INTO Heavy (heavy, wid, WeaponType)
+     VALUES ('Gjallerhorn', 15, 'Rocket Launcher'),
+            ('Dragons Breath', 16, 'Rocket Launcher'),
+            ('Super Good Advice', 17, 'Machine Gun'),
+            ('Thunderlord', 18, 'Machine Gun'),
+            ('Hezen Vengeance', 33, 'Rocket Launcher'),
+            ('Radegasts Fury', 34, 'Rocket Launcher'),
+            ('Corrective Measure', 35, 'Machine Gun'),
+            ('Zombie Apocalypse WF47', 36, 'Machine Gun'),
+            ('The Unfriendly Giant', 44, 'Rocket Launcher'),
+            ('Genghis-E', 45, 'Machine Gun');
+
+--Populates Archetype table
+INSERT INTO Archetype (aid, scid)
+     VALUES ('Hunter', 'Gunslinger'),
+            ('Titan', 'Striker'),
+            ('Warlock', 'Voidwalker');
+
+--Populates a table of a sample loadout for a player. Into which, I put my 3 characters' loadouts on my account
+INSERT INTO Player (pid, aid, Main, Secondary, Heavy)
+     VALUES (1, 'Warlock', 'Vision of Confluence', 'Plan-C', 'Hezen Vengeance'),
+            (2, 'Hunter', 'Atheons Epilogue', 'Patience and Time', 'Corrective Measure'),
+            (3, 'Titan', 'Thorn', 'Comedian', 'Radegasts Fury');
+
+
+
+
+--Views
+
+--Creates  to show all combinations Primary and Secondary Weapons and SubClasses that use Void Damage
+CREATE VIEW voidDamage
+AS
+SELECT DISTINCT s.scid, w.name
+FROM Weapons w, Subclass s
+WHERE w.slot = 'Main' OR  w.slot = 'Secondary' AND w.DmgType = 'Void' AND s.DmgType = 'Void'
+ORDER BY scid;
+
+
+--View to pull up the information of a weapon that does over 200 damage
+CREATE VIEW HighDamage
+AS
+SELECT DISTINCT *
+FROM Weapons
+WHERE DmgMin >= 200
+ORDER BY wid;
+
+
+--Reports and Queries
+--Shows all Hand Cannons with Kinetic with a decent rate of fire
+SELECT *
+FROM Weapons
+WHERE WeaponType = 'Hand Cannon' AND RateOfFire = 'Mediocre';
+
+--Shows all Rocket Launchers that do Kinetic Damage
+SELECT *
+FROM Weapons
+WHERE WeaponType = 'Rocker Launcher' AND DmgType = 'Kinetic';
+
+
+--Shows the Weapon ID and Name for the Main weapon connected to the Warlock of the premade player sets
+SELECT w.wid, w.name
+FROM Weapons w, Main m, Player p
+WHERE p.aid = 'Warlock' AND p.main = m.main AND m.wid = w.wid;
+
+
+--Shows the ID, name, damage type, and Weapon Type of All Weapons that share a damage type with the Striker Subclass
+SELECT w.wid, w.name, w.dmgtype, w.WeaponType
+FROM Weapons w, DamageType d, Subclass s
+WHERE s.scid = 'Striker' AND s.DmgType = d.DmgType AND d.DmgType = w.DmgType;
